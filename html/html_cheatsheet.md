@@ -1,7 +1,3 @@
-Sure! Below is a comprehensive HTML cheat sheet in **Markdown** format, including a structure overview, tags, common attributes, and examples.
-
----
-
 # HTML Cheat Sheet
 
 ## HTML Document Structure

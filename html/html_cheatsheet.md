@@ -41,21 +41,32 @@ A basic HTML document is structured as follows:
 - **`<head>`**: Contains meta-information about the document (e.g., title, links to stylesheets).
 - **`<body>`**: Contains the visible content of the webpage.
 
-### Meta Tags
-
-- **`<meta charset="UTF-8">`**: Specifies the character encoding (UTF-8 is common).
-- **`<meta name="viewport" content="width=device-width, initial-scale=1">`**: Makes the page responsive on different screen sizes (mobile-friendly).
-- **`<meta name="description" content="...">`**: Provides a description for search engines.
-- **`<meta name="keywords" content="...">`**: Provides a list of keywords for SEO.
-- **`<meta http-equiv="X-UA-Compatible" content="IE=edge">`**: Ensures compatibility with modern browsers.
-
 ### Head Tags
 
+The `<head>` element contains metadata, links to external resources, and other information about the HTML document that isn't displayed directly on the page.
+
 - **`<title>`**: Sets the title of the webpage that appears in the browser tab.
+- **`<meta>`**: Specifies metadata about the HTML document. Many `<meta>` elements include `name` and `content` attributes; `name` specifies the type of meta element and `content` specifies the actual metadata content.
+  - **`<meta charset="UTF-8">`**: Specifies the character encoding (UTF-8 is common).
+  - **`<meta name="viewport" content="width=device-width, initial-scale=1">`**: Makes the page responsive on different screen sizes (mobile-friendly).
+  - **`<meta name="description" content="...">`**: Provides a description for search engines.
+  - **`<meta name="keywords" content="...">`**: Provides a list of keywords for SEO.
+  - **`<meta http-equiv="X-UA-Compatible" content="IE=edge">`**: Ensures compatibility with modern browsers.
+  - **`<meta name="author" content="...">`**: Specifies the author of the document.
+  - **`<meta name="robots" content="index, follow">`**: Tells search engine robots what to do with the page.
+  - **`<meta property="og:title" content="...">`**: Defines the title for social media sharing (Open Graph protocol).
+  - **`<meta property="og:description" content="...">`**: Defines the description for social media sharing (Open Graph protocol).
+  - **`<meta property="og:image" content="...">`**: Defines the image to display for social media sharing (Open Graph protocol).
 - **`<link>`**: Defines a relationship between the current document and an external resource (e.g., stylesheets, favicons).
-  - `rel="stylesheet"`: Links to a CSS file.
-  - `rel="icon"`: Links to a favicon.
-  - `rel="canonical"`: Specifies the preferred URL for the page.
+  - **`rel="stylesheet"`**: Links to a CSS file.
+  - **`rel="icon"`**: Links to a favicon.
+  - **`rel="canonical"`**: Specifies the preferred URL for the page.
+  - **`rel="manifest"`**: Links to a manifest file for Progressive Web Apps (PWAs).
+  - **`rel="preload"`**: Preloads certain resources like fonts or images to speed up rendering.
+- **`<script>`**: Links to or embeds a JavaScript file.
+  - **`<script src="...">`**: External JavaScript file.
+  - **`<script defer>`**: Defers loading of the script until the HTML is fully parsed.
+
 
 ### Body Tags
 
@@ -83,6 +94,10 @@ A basic HTML document is structured as follows:
 - **`<ul>`**: Unordered list (bulleted list).
 - **`<ol>`**: Ordered list (numbered list).
 - **`<li>`**: List item.
+
+> **:information_source: Note:**  
+>It's only appropriate to use `<b>`, `<i>`, or `<u>` to convey a meaning traditionally conveyed with bold, italics, or underline when there isn't a more suitable element as they are presentational elemets not sematic; and there usually is. Consider whether `<strong>`, `<em>`, `<mark>`, or `<span>` might be more appropriate.
+
 
 ### Form Elements
 

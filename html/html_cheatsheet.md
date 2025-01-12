@@ -80,6 +80,9 @@ The `<head>` element contains metadata, links to external resources, and other i
 - **`<div>`**: Generic container for content (used for layout).
 - **`<span>`**: Inline container for text or content.
 
+> [!NOTE]
+> Semantic tags like `<article>`, `<section>` etc should be used instead of `<div>` whenever applicable
+
 ### Text Formatting Tags
 
 - **`<h1>`, `<h2>`, `<h3>`, ... `<h6>`**: Headings for defining sections (h1 is the highest level).
@@ -95,7 +98,7 @@ The `<head>` element contains metadata, links to external resources, and other i
 - **`<ol>`**: Ordered list (numbered list).
 - **`<li>`**: List item.
 
-> **:information_source: Note:**  
+> [!NOTE]
 >It's only appropriate to use `<b>`, `<i>`, or `<u>` to convey a meaning traditionally conveyed with bold, italics, or underline when there isn't a more suitable element as they are presentational elemets not sematic; and there usually is. Consider whether `<strong>`, `<em>`, `<mark>`, or `<span>` might be more appropriate.
 
 

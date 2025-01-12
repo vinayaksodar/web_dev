@@ -98,6 +98,8 @@ The `<head>` element contains metadata, links to external resources, and other i
 - **`<ol>`**: Ordered list (numbered list).
 - **`<li>`**: List item.
 
+<!-- the below will display correctly in github but not in vscode as the [!NOTE] is not part of standard markdown -->
+
 > [!NOTE]
 >It's only appropriate to use `<b>`, `<i>`, or `<u>` to convey a meaning traditionally conveyed with bold, italics, or underline when there isn't a more suitable element as they are presentational elemets not sematic; and there usually is. Consider whether `<strong>`, `<em>`, `<mark>`, or `<span>` might be more appropriate.
 
@@ -133,6 +135,66 @@ The `<head>` element contains metadata, links to external resources, and other i
 - **`<thead>`**: Groups the header content of a table.
 - **`<tbody>`**: Groups the body content of a table.
 - **`<tfoot>`**: Groups the footer content of a table.
+
+Here is an example of a small table using `rowspan` and `colspan`:
+
+```html
+<table border="1">
+  <thead>
+    <tr>
+      <th>Category</th>
+      <th>Sub-category</th>
+      <th>Details</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td rowspan="2">Fruits</td>
+      <td>Apple</td>
+      <td>Red or Green</td>
+    </tr>
+    <tr>
+      <td>Banana</td>
+      <td>Yellow</td>
+    </tr>
+    <tr>
+      <td colspan="2">Vegetables</td>
+      <td>Various types</td>
+    </tr>
+  </tbody>
+</table>
+```
+
+### Rendered Version:
+<table border="1">
+  <thead>
+    <tr>
+      <th>Category</th>
+      <th>Sub-category</th>
+      <th>Details</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td rowspan="2">Fruits</td>
+      <td>Apple</td>
+      <td>Red or Green</td>
+    </tr>
+    <tr>
+      <td>Banana</td>
+      <td>Yellow</td>
+    </tr>
+    <tr>
+      <td colspan="2">Vegetables</td>
+      <td>Various types</td>
+    </tr>
+  </tbody>
+</table>
+
+
+This table demonstrates:
+- **`rowspan="2"`**: The "Fruits" cell spans two rows.
+- **`colspan="2"`**: The "Vegetables" cell spans two columns.
 
 ### Semantic HTML Tags
 

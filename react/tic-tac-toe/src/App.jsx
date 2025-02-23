@@ -2,42 +2,57 @@ import "./App.css";
 import { useState } from "react";
 
 function App() {
-  const [squares, setSquares] = useState(Array(9).fill(null));
   const [isNextX, setIsNextX] = useState(true);
   const [history, setHistory] = useState([Array(9).fill(null)]);
+  const [move, setMove] = useState(0);
+  const currentSquares = history[move];
 
+  function handlePlay(newSquares) {
+    const nextHistory = [...history.slice(0, move + 1), newSquares];
+    setHistory(nextHistory);
+    setIsNextX(!isNextX);
+    setMove(nextHistory.length - 1);
+  }
+  function jumpto(move) {
+    setMove(move);
+  }
+
+  const moves = history.map((squares, move) => {
+    return (
+      <li key={move}>
+        <button onClick={() => jumpto(move)}>move {move}</button>
+      </li>
+    );
+  });
   return (
     <div className="game">
       <div className="game-board">
-        <Board />
+        <Board isNextX={isNextX} squares={currentSquares} onPlay={handlePlay} />
       </div>
       <div className="game-info">
-        <ol>{/* TODO */}</ol>
+        <ol>{moves}</ol>
       </div>
     </div>
   );
 }
 export default App;
 
-function Board() {
+function Board({ isNextX, squares, onPlay }) {
+  let newSquares = squares.slice();
   function handleClick(i) {
-    let newSquares = squares.slice();
-
     if (squares[i]) {
       return;
     }
     if (isNextX) {
       newSquares[i] = "X";
-      setIsNextX(false);
     } else {
       newSquares[i] = "O";
-      setIsNextX(true);
     }
-    setSquares(newSquares);
+    onPlay(newSquares);
   }
-
-  const winner = calculateWinner(squares);
+  const winner = calculateWinner(newSquares);
   let stateOfGame;
+
   if (winner) {
     stateOfGame = "Winner: " + winner;
   } else {

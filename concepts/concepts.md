@@ -49,3 +49,27 @@ but what if your frontend and backend are deployed on differnet servers
 - Backend has to first allow cookies via cors which is checked by the browser in the preflight
 - Frontend has to explicitly say include cookies that were set by the backend(we can't use same site here in cookie as we are sending a cookie from one frontend domain to a different backend domain)
 - Use a csrf token to block csrf attacks
+
+Monorepos exist because build tools like TypeScript and Vite don’t copy files outside `frontend/` or `backend/` into their `dist/` folders which are used for deployment. They expect dependencies to be in `node_modules` or within the same project folder. npm workspaces is a monorepo framework that solves this issue
+
+If you are not using a build tool let us say you are working with a pure python project you would have to copy over the common folder to both your frontend deployment and your backend deployment(you will have to do this again if you change something in common) or use it as a pip package.
+
+Turborepo simplifies build orchestration by creating a dependency graph. It detects changes in shared packages (e.g., `common/`), ensuring they are built first before dependent projects (`frontend/` and `backend/`). Since `frontend/` and `backend/` are independent, Turborepo builds them concurrently.
+
+You have to use a bundler like esbuild for the backend also if you use turborepo as when you deploy the simlinked dependencies also have to be bundled along.
+
+use increment in database for financial transaction instead of using using balance + newAmount to prevent race conditions if two simultaneous requests come.
+
+in bank related applications don't store decimals as float due to decimal to binary conversion instead store something like 3025 decimal 2 which will translate to 30.25
+
+You should also lock the rows which are being read as lets say a user requests transfer of 1000rs from his account which has a balance of 1001rs the request checks the balance and awaits a databbase call to update balance or something else. the same user fires another request in the meantime which again sees that he still has 1001rs in his account as it has not been updated so he can transfer money again
+
+This can happen because multiple workers are handling processes in parallel like uvicorn in python or pm2 in nodejs or if your server itself is async server like fastapi or express
+
+You can also put the requests in a queue for the above but databases provide the locking functionality which is easier
+
+Vercel is made by the creators of Next.js and has first-class support for Next.js. When you deploy your Next.js app to Vercel, the following happens by default:
+
+Pages that use Static Generation and assets (JS, CSS, images, fonts, etc) will automatically be served from the Vercel CDN, which is blazingly fast.
+
+Pages that use Server-Side Rendering and API routes will automatically become isolated Serverless Functions. This allows page rendering and API requests to scale infinitely. This is also problamatic

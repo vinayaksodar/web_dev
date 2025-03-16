@@ -390,8 +390,6 @@ document.getElementById("user").textContent = params.get("username");
 ✅ **Never trust user input—sanitize & escape before displaying it.**  
 ✅ **Use HTTP-only cookies, CSP, and input validation for protection.**
 
-Would you like a **real-world example in React or Next.js** to prevent XSS? 🚀
-
 ### **🔹 If `SameSite=None` is Required, How is CSRF Prevented?**
 
 When **frontend & backend are hosted separately**, we **cannot** use `SameSite=Strict` to prevent **Cross-Site Request Forgery (CSRF)** attacks. Instead, we use **other security measures**.
@@ -466,6 +464,7 @@ async function transferMoney() {
 
 - **An attacker’s website (`evil.com`) cannot access the CSRF token** (since it’s in an HTTP-only cookie).
 - **Without a valid token, the backend rejects the request.**
+- The above only works with cors only allowing the frontend else the attacker can also request for a csrf token and get it.
 
 ---
 
@@ -532,4 +531,119 @@ Set-Cookie: session=abc123; HttpOnly; Secure; SameSite=Lax
 ✅ **CSRF protection must be handled with CSRF tokens & `Origin` header checks.**  
 ✅ **Using `SameSite=Lax` for less critical cookies helps reduce CSRF risk.**
 
-Would you like a **real-world example with JWT authentication & CSRF protection?** 🚀
+# CORS only blocks response from being sent not request this is why you need csrf tokens with non preflighted requests
+
+## Your api endpoint is still hit and the get post etc is executed
+
+You're absolutely right! When your frontend sends a **JSON request (`Content-Type: application/json`)**, the browser will trigger a **CORS preflight request (`OPTIONS` request)** before the actual request is sent. This introduces an additional security layer that can help mitigate CSRF in some cases.
+
+---
+
+## **🔹 Why Preflight Requests Can Help Prevent CSRF**
+
+### **1️⃣ How Preflight Requests Work**
+
+- When making a `POST`, `PUT`, or `DELETE` request **with `Content-Type: application/json`**, the browser first sends an `OPTIONS` request to check if the actual request is allowed.
+- Your backend **must respond with the correct CORS headers** (`Access-Control-Allow-Origin` and `Access-Control-Allow-Methods`) before the browser allows the real request to proceed.
+
+### **2️⃣ Why This Helps Against CSRF**
+
+- **Attackers cannot send preflight requests from evil.com**
+  - Browsers **automatically block** `OPTIONS` requests if `api.bank.com` does not allow `evil.com` as an origin.
+- **If the preflight request is blocked, the actual request is never sent.**
+  - This means the attacker cannot force a JSON request from the victim’s browser.
+
+---
+
+## **🔴 But CSRF Is Still Possible in Some Cases**
+
+Even though preflight requests help, **CSRF can still happen in the following cases:**
+
+### **1️⃣ If Your API Supports `application/x-www-form-urlencoded` or `multipart/form-data`**
+
+- **Simple form submissions (`Content-Type: application/x-www-form-urlencoded`) do NOT trigger a preflight request.**
+- Attackers can exploit this by sending a forged form submission from `evil.com`:
+  ```html
+  <form action="https://api.bank.com/transfer" method="POST">
+    <input type="hidden" name="amount" value="10000" />
+    <input type="hidden" name="to" value="attacker" />
+    <input type="submit" />
+  </form>
+  <script>
+    document.forms[0].submit();
+  </script>
+  ```
+- Since this is a **"simple request"**, the browser **sends cookies** without a preflight request.
+- **If your API accepts this format, the CSRF attack will succeed!**
+
+### **2️⃣ If Your API Allows Wildcard CORS (`Access-Control-Allow-Origin: *`)**
+
+- Some APIs **mistakenly allow `Access-Control-Allow-Origin: *`**, which allows any website (including `evil.com`) to send requests.
+
+### **3️⃣ If Your API Supports JSON but Allows GET Requests to Modify Data**
+
+- If your API **allows state-changing actions using `GET` requests**, an attacker could exploit CSRF by embedding an `<img>` tag:
+  ```html
+  <img src="https://api.bank.com/transfer?amount=10000&to=attacker" />
+  ```
+- **GET requests never trigger preflight checks**, so the browser sends the request directly.
+
+---
+
+## **✅ Best Practices: How to Fully Prevent CSRF**
+
+### **1️⃣ Use CSRF Tokens (Best Protection)**
+
+Even with preflight protection, it's best to require an **`X-CSRF-Token`** header:
+
+```javascript
+await fetch("https://api.bank.com/transfer", {
+  method: "POST",
+  credentials: "include",
+  headers: {
+    "Content-Type": "application/json",
+    "X-CSRF-Token": csrfToken, // ✅ CSRF token required
+  },
+  body: JSON.stringify({ amount: 10000, to: "receiver" }),
+});
+```
+
+**Why?** Attackers **cannot read responses due to CORS**, so they **cannot steal the CSRF token**.
+
+---
+
+### **2️⃣ Use `SameSite=Lax` or `SameSite=Strict` for Cookies**
+
+```http
+Set-Cookie: sessionId=abc123; Secure; HttpOnly; SameSite=Lax
+```
+
+- This prevents cookies from being sent in **cross-site requests**.
+
+---
+
+### **3️⃣ Reject Non-Preflighted Requests**
+
+- If your API **only accepts `application/json`**, preflight requests will be required.
+- Ensure your backend **rejects `application/x-www-form-urlencoded` and `multipart/form-data`** requests.
+
+Example: **Reject "simple" requests in Express.js**
+
+```javascript
+app.use((req, res, next) => {
+  if (!req.is("application/json")) {
+    return res.status(415).send("Unsupported content type");
+  }
+  next();
+});
+```
+
+---
+
+## **🔥 Final Takeaway**
+
+- **Preflight requests help**, but they **do not fully prevent CSRF**.
+- **CSRF tokens are still needed** unless your cookies use `SameSite=Strict`.
+- **Best practice**: Use **both** CSRF tokens **and** `SameSite=Lax` cookies for the best protection.
+
+Would you like help implementing this in your app? 🚀
